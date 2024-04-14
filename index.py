@@ -7,6 +7,24 @@ app = Flask(__name__)
 conn = sqlite3.connect('site.db')
 cursor = conn.cursor()
 
+house_info = {
+    1: {
+        'rooms': 3,
+        'adults': 2,
+        'children': 1
+    },
+    2: {
+        'rooms': 4,
+        'adults': 3,
+        'children': 2
+    },
+    3: {
+        'rooms': 2,
+        'adults': 1,
+        'children': 0
+    }
+}
+
 # Create reservations table if it doesn't exist
 create_table_query = '''
 CREATE TABLE IF NOT EXISTS reservations (
@@ -15,7 +33,8 @@ CREATE TABLE IF NOT EXISTS reservations (
     check_out DATE NOT NULL,
     rooms INTEGER NOT NULL,
     adults INTEGER NOT NULL,
-    children INTEGER NOT NULL
+    children INTEGER NOT NULL,
+    House_NO INTEGER
 );
 '''
 cursor.execute(create_table_query)
@@ -33,26 +52,35 @@ def index():
 def submit():
     check_in = request.form['check_in']
     check_out = request.form['check_out']
-    rooms = request.form['rooms']
-    adults = request.form['adults']
-    children = request.form['children']
+    rooms_needed = int(request.form['rooms'])
 
     # Connect to SQLite database
     conn = sqlite3.connect('site.db')
     cursor = conn.cursor()
 
-    # Insert new reservation into the database
-    insert_query = '''
-    INSERT INTO reservations ( check_in, check_out, rooms, adults, children)
-    VALUES (?, ?, ?, ?, ?)
-    '''
-    cursor.execute(insert_query, ( check_in, check_out, rooms, adults, children))
+    # Check if the requested number of rooms is available in any house
+    available_houses = []
+    for house_id, info in house_info.items():
+        if info['rooms'] >= rooms_needed:
+            available_houses.append(house_id)
 
-    # Commit changes and close connection
-    conn.commit()
-    conn.close()
+    # Collect all available houses that are not booked for the requested dates
+    available_results = []
+    for house_id in available_houses:
+        cursor.execute('''
+            SELECT COUNT(*) FROM reservations
+            WHERE House_NO = ? AND
+            (check_in BETWEEN ? AND ? OR check_out BETWEEN ? AND ?);
+        ''', (house_id, check_in, check_out, check_in, check_out))
+        booking_count = cursor.fetchone()[0]
+        if booking_count == 0:
+            available_results.append(f"House {house_id} is available for your dates with {house_info[house_id]['rooms']} rooms.")
 
-    return "Form submitted successfully!"
+    # If available houses were found, display them; otherwise, show a message
+    if available_results:
+        return render_template('available_houses.html', available_results=available_results)
+    else:
+        return "Sorry, no houses are available for your requested dates or rooms."
 
 if __name__ == '__main__':
     app.run(debug=True)
