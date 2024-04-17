@@ -3,7 +3,6 @@ import sqlite3
 
 app = Flask(__name__)
 
-# Connect to SQLite database
 conn = sqlite3.connect('site.db')
 cursor = conn.cursor()
 
@@ -39,7 +38,6 @@ CREATE TABLE IF NOT EXISTS reservations (
 '''
 cursor.execute(create_table_query)
 
-# Commit changes and close connection
 conn.commit()
 conn.close()
 
@@ -53,12 +51,9 @@ def submit():
     check_in = request.form['check_in']
     check_out = request.form['check_out']
     rooms_needed = int(request.form['rooms'])
-
-    # Connect to SQLite database
     conn = sqlite3.connect('site.db')
     cursor = conn.cursor()
 
-    # Check if the requested number of rooms is available in any house
     available_houses = []
     for house_id, info in house_info.items():
         if info['rooms'] >= rooms_needed:
@@ -76,7 +71,7 @@ def submit():
         if booking_count == 0:
             available_results.append(f"House {house_id} is available for your dates with {house_info[house_id]['rooms']} rooms.")
 
-    # If available houses were found, display them; otherwise, show a message
+    # If available houses were found display them
     if available_results:
         return render_template('available_houses.html', available_results=available_results)
     else:
