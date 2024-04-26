@@ -13,7 +13,9 @@
                 <li>
                     {{ result }}
                     <form action="/book" method="POST">
-                        <input type="hidden" name="house_id" value="{{ result.split()[1] }}">
+                        <input type="hidden" name="house_id" value="{{ result.split(' ')[1] }}">
+                        <input type="hidden" name="check_in" value="{{ request.form['check_in'] }}">
+                        <input type="hidden" name="check_out" value="{{ request.form['check_out'] }}">
                         <input type="submit" value="Book Now">
                     </form>
                 </li>
