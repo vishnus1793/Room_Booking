@@ -11,7 +11,7 @@
             padding: 0;
             font-family: Arial, sans-serif;
             color: #333;
-            font-size: 16px; /* Reduced font size for better readability */
+            font-size: 28px; /* Increased font size */
         }
 
         .video-background {
@@ -43,7 +43,7 @@
             text-align: center;
             margin-top: 50px;
             margin-bottom: 30px;
-            font-size: 28px;
+            font-size: 28px; /* Increased font size */
             color: #555;
         }
 
@@ -56,6 +56,7 @@
         .house-item {
             margin-bottom: 20px;
             padding: 20px;
+            
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
@@ -79,8 +80,8 @@
         }
 
         .description {
-            font-size: 18px; /* Adjusted font size */
-            color: #333; /* Changed description color for better contrast */
+            font-size: 28px; /* Increased font size */
+            color: #0b1eeb;
             margin-top: 20px;
         }
     </style>
@@ -90,56 +91,45 @@
     <div class="video-background">
         <video autoplay loop muted>
             <source src="https://videos.pexels.com/video-files/7578552/7578552-uhd_3840_2160_30fps.mp4" type="video/mp4">
+            
         </video>
     </div>
 
     <!-- Content -->
     <div class="content">
         <h1>Available Houses</h1>
-        <ul class="houses-list">
-            {% if available_results %}
+        {% if available_results %}
+            <ul class="houses-list">
                 {% for result in available_results %}
                     <li class="house-item">
                         {{ result }}
                         <button onclick="showVR('{{ result.split(' ')[1] }}')">View VR</button>
                         <div id="vr-popup-{{ result.split(' ')[1] }}" class="vr-popup">
                             <a-scene>
-                                {% if result.split(' ')[1] == 'room1' %}
-                                    <a-sky src="https://saliniyan.github.io/images/maxresdefault.jpg" rotation="0 -90 0"></a-sky>
-                                {% elif result.split(' ')[1] == 'room2' %}
-                                    <a-sky src="https://saliniyan.github.io/images/vr-room2.jpg" rotation="0 -90 0"></a-sky>
-                                {% elif result.split(' ')[1] == 'room3' %}
-                                    <a-sky src="https://saliniyan.github.io/images/vr-room3.jpg" rotation="0 -90 0"></a-sky>
-                                {% endif %}
+                                <a-sky src="https://saliniyan.github.io/images/maxresdefault.jpg" rotation="0 -90 0"></a-sky>
                             </a-scene>
-                            <button onclick="hideVR('{{ result.split(' ')[1] }}')">Close VR</button>
+                            <button onclick="hideVR('{{ result.split(' ')[1] | escape }}')">Close VR</button>
                         </div>
                         <form action="/book" method="POST">
                             <input type="hidden" name="house_id" value="{{ result.split(' ')[1] }}">
                             <input type="hidden" name="check_in" value="{{ request.form['check_in'] }}">
                             <input type="hidden" name="check_out" value="{{ request.form['check_out'] }}">
-                            <input type="submit" value="Book Now">
+                            <input type="submit" value="Book Now" style="font-size:medium; background-color: rgb(33, 120, 225);color: #fff;border-radius: 5px;">
                         </form>
-                        {% if result.split(' ')[1] == 'room1' %}
-                            <p class="description">Description: Cozy single room with a comfortable bed and a view of the garden.</p>
-                        {% elif result.split(' ')[1] == 'room2' %}
-                            <p class="description">Description: Spacious double room with modern amenities and a balcony overlooking the city skyline.</p>
-                        {% elif result.split(' ')[1] == 'room3' %}
-                            <p class="description">Description: Luxurious suite with a king-sized bed, jacuzzi, and panoramic views of the ocean.</p>
-                        {% endif %}
+                        <p class="description">Description: At our guest house, hospitality is our priority. Our friendly staff is always available to assist with any requests or recommendations, ensuring that your stay is nothing short of exceptional.</p>
                     </li>
                 {% endfor %}
-            {% else %}
-                <p>Sorry, no houses are available for your requested dates or rooms.</p>
-            {% endif %}
-        </ul>
+            </ul>
+        {% else %}
+            <p>Sorry, no houses are available for your requested dates or rooms.</p>
+        {% endif %}
     </div>
 
     <script>
         function showVR(roomId) {
             var popup = document.getElementById('vr-popup-' + roomId);
             popup.style.display = 'block';
-            //popup.requestFullscreen(); // Commented out as it's not necessary for displaying the VR popup
+            popup.requestFullscreen();
         }
 
         function hideVR(roomId) {
