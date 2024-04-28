@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Houses</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            color: #333;
+            font-size: 28px; /* Increased font size */
+        }
+
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .video-background video {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            font-size: 28px; /* Increased font size */
+            color: #555;
+        }
+
+        .houses-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .house-item {
+            margin-bottom: 20px;
+            padding: 20px;
+            
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .house-item button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .vr-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+
+        .description {
+            font-size: 28px; /* Increased font size */
+            color: #0b1eeb;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Video Background -->
+    <div class="video-background">
+        <video autoplay loop muted>
+            <source src="https://videos.pexels.com/video-files/7578552/7578552-uhd_3840_2160_30fps.mp4" type="video/mp4">
+            
+        </video>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <h1>Available Houses</h1>
+        {% if available_results %}
+            <ul class="houses-list">
+                {% for result in available_results %}
+                    <li class="house-item">
+                        House ID: {{ result.split(' ')[0] }}
+                        <br>
+                        Number of Rooms: {{ result.split(' ')[1] }}
+                        <br>
+                        Description: {{ ' '.join(result.split(' ')[2:]) }}
+                        <button onclick="showVR('{{ result.split(' ')[1] }}')">View VR</button>
+                        <div id="vr-popup-{{ result.split(' ')[1] }}" class="vr-popup">
+                            <a-scene>
+                                <a-sky src="https://saliniyan.github.io/images/maxresdefault.jpg" rotation="0 -90 0"></a-sky>
+                            </a-scene>
+                            <button onclick="hideVR('{{ result.split(' ')[1] | escape }}')">Close VR</button>
+                        </div>
+                        <form action="/book" method="POST">
+                            <input type="hidden" name="house_id" value="{{ result.split(' ')[0] }}">
+                            <input type="hidden" name="check_in" value="{{ request.form['check_in'] }}">
+                            <input type="hidden" name="check_out" value="{{ request.form['check_out'] }}">
+                            <input type="submit" value="Book Now" style="font-size: medium; background-color: rgb(33, 120, 225); color: #fff; border-radius: 5px;">
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Sorry, no houses are available for your requested dates or rooms.</p>
+        {% endif %}
+    </div>
+    
+
+    <script>
+        function showVR(roomId) {
+            var popup = document.getElementById('vr-popup-' + roomId);
+            popup.style.display = 'block';
+            popup.requestFullscreen();
+        }
+
+
+        
+    </script>
+</body>
+</html>
