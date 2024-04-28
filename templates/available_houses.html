@@ -102,7 +102,11 @@
             <ul class="houses-list">
                 {% for result in available_results %}
                     <li class="house-item">
-                        {{ result }}
+                        House ID: {{ result.split(' ')[0] }}
+                        <br>
+                        Number of Rooms: {{ result.split(' ')[1] }}
+                        <br>
+                        Description: {{ ' '.join(result.split(' ')[2:]) }}
                         <button onclick="showVR('{{ result.split(' ')[1] }}')">View VR</button>
                         <div id="vr-popup-{{ result.split(' ')[1] }}" class="vr-popup">
                             <a-scene>
@@ -111,12 +115,11 @@
                             <button onclick="hideVR('{{ result.split(' ')[1] | escape }}')">Close VR</button>
                         </div>
                         <form action="/book" method="POST">
-                            <input type="hidden" name="house_id" value="{{ result.split(' ')[1] }}">
+                            <input type="hidden" name="house_id" value="{{ result.split(' ')[0] }}">
                             <input type="hidden" name="check_in" value="{{ request.form['check_in'] }}">
                             <input type="hidden" name="check_out" value="{{ request.form['check_out'] }}">
-                            <input type="submit" value="Book Now" style="font-size:medium; background-color: rgb(33, 120, 225);color: #fff;border-radius: 5px;">
+                            <input type="submit" value="Book Now" style="font-size: medium; background-color: rgb(33, 120, 225); color: #fff; border-radius: 5px;">
                         </form>
-                        <p class="description">Description: At our guest house, hospitality is our priority. Our friendly staff is always available to assist with any requests or recommendations, ensuring that your stay is nothing short of exceptional.</p>
                     </li>
                 {% endfor %}
             </ul>
@@ -124,6 +127,7 @@
             <p>Sorry, no houses are available for your requested dates or rooms.</p>
         {% endif %}
     </div>
+    
 
     <script>
         function showVR(roomId) {
@@ -132,10 +136,8 @@
             popup.requestFullscreen();
         }
 
-        function hideVR(roomId) {
-            var popup = document.getElementById('vr-popup-' + roomId);
-            popup.style.display = 'none';
-        }
+
+        
     </script>
 </body>
 </html>

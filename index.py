@@ -24,17 +24,23 @@ house_info = {
     1: {
         'rooms': 3,
         'adults': 2,
-        'children': 1
+        'children': 1,
+        'description':"NATURAL VIEW",
+        'url':"https://saliniyan.github.io/images/maxresdefault.jpg" 
     },
     2: {
         'rooms': 4,
         'adults': 3,
-        'children': 2
+        'children': 2,
+        'description':"HOTAL NEAR",
+        'url':"https://saliniyan.github.io/images/maxresdefault.jpg" 
     },
     3: {
         'rooms': 2,
         'adults': 1,
-        'children': 0
+        'children': 0,
+        'description':"PARKING LOT",
+        'url':"https://saliniyan.github.io/images/maxresdefault.jpg" 
     }
 }
 
@@ -69,12 +75,14 @@ def submit():
         ''', (house_id, check_in, check_out, check_in, check_out))
         booking_count = cursor.fetchone()[0]
         if booking_count == 0:
-            available_results.append(f"House {house_id} is available for your dates with {house_info[house_id]['rooms']} rooms.")
+            house_description = house_info[house_id]['description']
+            available_results.append(f"{house_id} {house_info[house_id]['rooms']} {house_description}")
 
     if available_results:
         return render_template('available_houses.html', available_results=available_results)
     else:
         return "Sorry, no houses are available for your requested dates or rooms."
+
 
 @app.route('/book', methods=['POST'])
 def book():
