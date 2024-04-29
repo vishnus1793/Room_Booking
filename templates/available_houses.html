@@ -11,7 +11,7 @@
             padding: 0;
             font-family: Arial, sans-serif;
             color: #333;
-            font-size: 28px; /* Increased font size */
+            font-size: 28px; 
         }
 
         .video-background {
@@ -37,14 +37,21 @@
 
         .content {
             padding: 20px;
-        }
+            border-radius: 10px; 
+            background-color: rgba(247, 247, 247, 0.4); /* Semi-transparent light background color */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+}
+
+
+
 
         h1 {
             text-align: center;
             margin-top: 50px;
             margin-bottom: 30px;
-            font-size: 28px; /* Increased font size */
-            color: #555;
+            font-size: 33px; 
+            color: #004b16;
+    
         }
 
         .houses-list {
@@ -95,49 +102,49 @@
         </video>
     </div>
 
-    <!-- Content -->
-    <div class="content">
-        <h1>Available Houses</h1>
-        {% if available_results %}
-            <ul class="houses-list">
-                {% for result in available_results %}
-                    <li class="house-item">
-                        House ID: {{ result['house_id'] }}
-                        <br>
-                        Number of Rooms: {{ result['rooms'] }}
-                        <br>
-                        Description: {{ result['description'] }}
-                        <button onclick="showVR(`{{ result['rooms'] }}`)">View VR</button>
-                        <div id="vr-popup-{{ result['rooms'] }}" class="vr-popup">
-                            <a-scene>
-                                <a-sky src="{{ result['url'] }}" rotation="0 -90 0"></a-sky>
-                            </a-scene>
-                             <!--<button onclick="hideVR(`{{ result['rooms'] | escape }}`)">Close VR</button>-->
-                        </div>
-                        <form action="/book" method="POST">
-                            <input type="hidden" name="house_id" value="{{ result['house_id'] }}">
-                            <input type="hidden" name="check_in" value="{{ request.form['check_in'] }}">
-                            <input type="hidden" name="check_out" value="{{ request.form['check_out'] }}">
-                            <input type="submit" value="Book Now" style="font-size: medium; background-color: rgb(33, 120, 225); color: #fff; border-radius: 5px;">
-                        </form>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>Sorry, no houses are available for your requested dates or rooms.</p>
-        {% endif %}
-    </div>
-    
-
-    <script>
-        function showVR(roomId) {
-            var popup = document.getElementById('vr-popup-' + roomId);
-            popup.style.display = 'block';
-            popup.requestFullscreen();
+<!-- Content -->
+<h1>Available Houses</h1>
+<div class="content"> 
+    {% if available_results %}
+        <ul class="houses-list">
+            {% for result in available_results %}
+                <li class="house-item">
+                    House ID: {{ result['house_id'] }}
+                    <br>
+                    Number of Rooms: {{ result['rooms'] }}
+                    <br>
+                    Description: {{ result['description'] }}
+                    <button onclick="showVR(`{{ result['rooms'] }}`)">View VR</button>
+                    <div id="vr-popup-{{ result['rooms'] }}" class="vr-popup">
+                        <a-scene>
+                            <a-sky src="{{ result['url'] }}" rotation="0 -90 0"></a-sky>
+                        </a-scene>
+                    </div>
+                    <form action="/book" method="POST">
+                        <input type="hidden" name="house_id" value="{{ result['house_id'] }}">
+                        <input type="hidden" name="check_in" value="{{ request.form['check_in'] }}">
+                        <input type="hidden" name="check_out" value="{{ request.form['check_out'] }}">
+                        <input type="submit" value="Book Now" style="font-size: medium; background-color: rgb(33, 120, 225); color: #fff; border-radius: 5px;">
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Sorry, no houses are available for your requested dates or rooms.</p>
+    {% endif %}
+</div>
+<script>
+    function showVR(roomId) {
+        var popup = document.getElementById('vr-popup-' + roomId);
+        popup.style.display = 'block';
+        popup.requestFullscreen();
+        // Hide the VR button
+        var vrButton = popup.querySelector('button');
+        if (vrButton) {
+            vrButton.style.display = 'none';
         }
+    }
+</script>
 
-
-        
-    </script>
 </body>
 </html>

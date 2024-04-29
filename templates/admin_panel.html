@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+</head>
+<body>
+    <h1>Pending Bookings</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Check-in Date</th>
+                <th>Check-out Date</th>
+                <th>House ID</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in pending_bookings %}
+            <tr>
+                <td>{{ booking['id'] }}</td>
+                <td>{{ booking['User'] }}</td>
+                <td>{{ booking['check_in'] }}</td>
+                <td>{{ booking['check_out'] }}</td>
+                <td>{{ booking['House_NO'] }}</td>
+                <td>{{ booking['status'] }}</td>
+                <td>
+                    <form method="post" action="{{ url_for('admin_panel') }}">
+                        <input type="hidden" name="booking_id" value="{{ booking['id'] }}">
+                        <select name="action">
+                            <option value="accept">Accept</option>
+                            <option value="reject">Reject</option>
+                        </select>
+                        <button type="submit">Submit</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
