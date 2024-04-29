@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, g, redirect, url_for
+from flask import Flask, render_template, request, g, redirect, url_for, session
 import sqlite3
+
 
 application = Flask(__name__)
 application.config['DATABASE'] = 'site.db'
+application.secret_key = "hello"
 
 mail = "saliniyanp02@gmail.com"
 
@@ -28,8 +30,9 @@ house_info = {
         'adults': 2,
         'children': 1,
         'description': "NATURAL VIEW",
-        'url': "https://saliniyan.github.io/images/maxresdefault.jpg"
+        'url': "https://saliniyan.github.io/images/room.jpeg"
     },
+
     2: {
         'rooms': 4,
         'adults': 3,
@@ -65,7 +68,28 @@ def create_tables():
 
 @application.route('/')
 def index():
-    return render_template('index1.html')
+    return render_template('login.html')
+
+@application.route('/authenticate', methods=['POST'])
+def authenticate():
+    username = request.form['username']
+    password = request.form['password']
+
+    if username == 's' and password == '123':
+        session['username'] = username
+        return redirect(url_for('index1'))  # Redirect to index1 route
+    elif username == 'b' and password == '456':
+        session['username'] = username
+        return redirect(url_for('admin_panel'))  # Redirect to admin_panel route
+    else:
+        return "Invalid credentials"
+
+@application.route('/index1')
+def index1():
+    if 'username' in session and session['username'] == 's':
+        return render_template('index1.html')
+    else:
+        return redirect(url_for('index'))
 
 @application.route('/submit', methods=['POST'])
 def submit():
