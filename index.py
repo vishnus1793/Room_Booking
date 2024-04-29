@@ -38,14 +38,14 @@ house_info = {
         'adults': 3,
         'children': 2,
         'description': "HOTEL NEAR",
-        'url': "https://saliniyan.github.io/images/room2.jpeg"
+        'url': "https://saliniyan.github.io/images/room.jpeg"
     },
     3: {
         'rooms': 2,
         'adults': 1,
         'children': 0,
         'description': "PARKING LOT",
-        'url': "https://articulate-heroes.s3.amazonaws.com/uploads/rte/blknfsca_tu09tpc-a-large-bed-in-a-room%20(1).jpeg"
+        'url': "https://saliniyan.github.io/images/room.jpeg"
     }
 }
 
