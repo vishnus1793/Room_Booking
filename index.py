@@ -1,55 +1,79 @@
-from flask import Flask, render_template, request, redirect, url_for, g
+from flask import Flask, render_template, request, g
 import sqlite3
 
-app = Flask(__name__)
-app.config['DATABASE'] = 'site.db'
+application = Flask(__name__)
+application.config['DATABASE'] = 'site.db'
 
+# Function to get the database connection
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        db = g._database = sqlite3.connect(app.config['DATABASE'])
+        db = g._database = sqlite3.connect(application.config['DATABASE'])
         db.row_factory = sqlite3.Row  # Access rows as dictionaries
     return db
 
+# Function to close the database connection
 def close_db(e=None):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
 
-@app.teardown_appcontext
+# Teardown function to close the database connection at the end of the request
+@application.teardown_appcontext
 def teardown_db(e=None):
     close_db()
 
+# House information dictionary
 house_info = {
     1: {
         'rooms': 3,
         'adults': 2,
         'children': 1,
-        'description':"NATURAL VIEW",
-        'url':"https://saliniyan.github.io/images/maxresdefault.jpg" 
+        'description': "NATURAL VIEW",
+        'url': "https://saliniyan.github.io/images/maxresdefault.jpg"
     },
     2: {
         'rooms': 4,
         'adults': 3,
         'children': 2,
-        'description':"HOTAL NEAR",
-        'url':"https://saliniyan.github.io/images/maxresdefault.jpg" 
+        'description': "HOTEL NEAR",
+        'url': "https://saliniyan.github.io/images/maxresdefault.jpg"
     },
     3: {
         'rooms': 2,
         'adults': 1,
         'children': 0,
-        'description':"PARKING LOT",
-        'url':"https://saliniyan.github.io/images/maxresdefault.jpg" 
+        'description': "PARKING LOT",
+        'url': "https://saliniyan.github.io/images/maxresdefault.jpg"
     }
 }
 
+# Function to create necessary tables in the database
+def create_tables():
+    with application.app_context():
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS reservations (
+                id INTEGER PRIMARY KEY,
+                check_in DATE NOT NULL,
+                check_out DATE NOT NULL,
+                rooms INTEGER NOT NULL,
+                adults INTEGER NOT NULL,
+                children INTEGER NOT NULL,
+                House_NO INTEGER NOT NULL,
+                FOREIGN KEY (House_NO) REFERENCES houses(id)
+            );
+        ''')
+        db.commit()
 
-@app.route('/')
+# Route for the index page
+@application.route('/')
 def index():
     return render_template('index1.html')
 
-@app.route('/submit', methods=['POST'])
+# Route for form submission
+@application.route('/submit', methods=['POST'])
 def submit():
     check_in = request.form['check_in']
     check_out = request.form['check_out']
@@ -83,8 +107,8 @@ def submit():
     else:
         return "Sorry, no houses are available for your requested dates or rooms."
 
-
-@app.route('/book', methods=['POST'])
+# Route for booking
+@application.route('/book', methods=['POST'])
 def book():
     house_id = request.form['house_id']
     check_in = request.form['check_in']
@@ -100,12 +124,14 @@ def book():
         INSERT INTO reservations (check_in, check_out, rooms, adults, children, House_NO)
         VALUES (?, ?, ?, ?, ?, ?);
     ''', (check_in, check_out, house_info[int(house_id)]['rooms'], house_info[int(house_id)]['adults'], house_info[int(house_id)]['children'], house_id))
-    
+
     db.commit()
 
     success_message = "Booking successful! Thank you for choosing us."
 
     return render_template('success.html', success_message=success_message)
 
+# Main block to run the application
 if __name__ == '__main__':
-    app.run(debug=True)
+    create_tables()  # Create tables within the application context
+    application.run(debug=True)
