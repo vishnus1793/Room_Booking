@@ -4,43 +4,170 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: scale(1.01);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow: hidden;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+            transition: background-color 0.3s ease;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .action-form {
+            display: flex;
+            align-items: center;
+        }
+
+        select {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            background-color: #f7f7f7;
+            color: #333;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .status-accept {
+            color: #27ae60;
+        }
+
+        .status-reject {
+            color: #e74c3c;
+        }
+
+        .status-pending {
+            color: #f39c12;
+        }
+
+        .status-label {
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .status-accept {
+            background-color: #27ae60;
+        }
+
+        .status-reject {
+            background-color: #e74c3c;
+        }
+
+        .status-pending {
+            background-color: #f39c12;
+        }
+    </style>
 </head>
 <body>
-    <h1>Pending Bookings</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>User</th>
-                <th>Check-in Date</th>
-                <th>Check-out Date</th>
-                <th>House ID</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for booking in pending_bookings %}
-            <tr>
-                <td>{{ booking['id'] }}</td>
-                <td>{{ booking['User'] }}</td>
-                <td>{{ booking['check_in'] }}</td>
-                <td>{{ booking['check_out'] }}</td>
-                <td>{{ booking['House_NO'] }}</td>
-                <td>{{ booking['status'] }}</td>
-                <td>
-                    <form method="post" action="{{ url_for('admin_panel') }}">
-                        <input type="hidden" name="booking_id" value="{{ booking['id'] }}">
-                        <select name="action">
-                            <option value="accept">Accept</option>
-                            <option value="reject">Reject</option>
-                        </select>
-                        <button type="submit">Submit</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="container">
+        <h1>Pending Bookings</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Check-in Date</th>
+                    <th>Check-out Date</th>
+                    <th>House ID</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in pending_bookings %}
+                <tr>
+                    <td>{{ booking['id'] }}</td>
+                    <td>{{ booking['User'] }}</td>
+                    <td>{{ booking['check_in'] }}</td>
+                    <td>{{ booking['check_out'] }}</td>
+                    <td>{{ booking['House_NO'] }}</td>
+                    <td>
+                        <span class="status-label {% if booking['status'] == 'accept' %}status-accept{% elif booking['status'] == 'reject' %}status-reject{% else %}status-pending{% endif %}">
+                            {{ booking['status'] | capitalize }}
+                        </span>
+                    </td>
+                    <td>
+                        <form class="action-form" method="post" action="{{ url_for('admin_panel') }}">
+                            <input type="hidden" name="booking_id" value="{{ booking['id'] }}">
+                            <select name="action">
+                                <option value="accept">Accept</option>
+                                <option value="reject">Reject</option>
+                            </select>
+                            <button type="submit">Submit</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>

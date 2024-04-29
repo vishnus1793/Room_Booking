@@ -11,7 +11,7 @@
             padding: 0;
             font-family: Arial, sans-serif;
             color: #333;
-            font-size: 28px; 
+            font-size: 16px; /* Adjust font size as needed */
         }
 
         .video-background {
@@ -35,37 +35,37 @@
             transform: translate(-50%, -50%);
         }
 
-        .content {
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
-            border-radius: 10px; 
-            background-color: rgba(247, 247, 247, 0.4); /* Semi-transparent light background color */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
-}
-
-
-
+        }
 
         h1 {
             text-align: center;
             margin-top: 50px;
             margin-bottom: 30px;
-            font-size: 33px; 
-            color: #004b16;
-    
+            font-size: 48px; /* Larger font size */
+            color: #3503e9; /* Tesla's blue color */
         }
 
         .houses-list {
             list-style-type: none;
             padding: 0;
             margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
         }
 
         .house-item {
+            width: 300px; /* Adjust width as needed */
             margin-bottom: 20px;
             padding: 20px;
-            
-            border-radius: 5px;
+            border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            text-align: center;
         }
 
         .house-item button {
@@ -75,6 +75,7 @@
             padding: 10px 20px;
             border-radius: 10px;
             cursor: pointer;
+            margin-top: 20px;
         }
 
         .vr-popup {
@@ -87,7 +88,7 @@
         }
 
         .description {
-            font-size: 28px; /* Increased font size */
+            font-size: 20px; /* Adjust font size as needed */
             color: #0b1eeb;
             margin-top: 20px;
         }
@@ -97,54 +98,55 @@
     <!-- Video Background -->
     <div class="video-background">
         <video autoplay loop muted>
-            <source src="https://videos.pexels.com/video-files/7578552/7578552-uhd_3840_2160_30fps.mp4" type="video/mp4">
-            
+            <!-- Add your video source here -->
         </video>
     </div>
 
-<!-- Content -->
-<h1>Available Houses</h1>
-<div class="content"> 
-    {% if available_results %}
-        <ul class="houses-list">
-            {% for result in available_results %}
-                <li class="house-item">
-                    House ID: {{ result['house_id'] }}
-                    <br>
-                    Number of Rooms: {{ result['rooms'] }}
-                    <br>
-                    Description: {{ result['description'] }}
-                    <button onclick="showVR(`{{ result['rooms'] }}`)">View VR</button>
-                    <div id="vr-popup-{{ result['rooms'] }}" class="vr-popup">
-                        <a-scene>
-                            <a-sky src="{{ result['url'] }}" rotation="0 -90 0"></a-sky>
-                        </a-scene>
-                    </div>
-                    <form action="/book" method="POST">
-                        <input type="hidden" name="house_id" value="{{ result['house_id'] }}">
-                        <input type="hidden" name="check_in" value="{{ request.form['check_in'] }}">
-                        <input type="hidden" name="check_out" value="{{ request.form['check_out'] }}">
-                        <input type="submit" value="Book Now" style="font-size: medium; background-color: rgb(33, 120, 225); color: #fff; border-radius: 5px;">
-                    </form>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>Sorry, no houses are available for your requested dates or rooms.</p>
-    {% endif %}
-</div>
-<script>
-    function showVR(roomId) {
-        var popup = document.getElementById('vr-popup-' + roomId);
-        popup.style.display = 'block';
-        popup.requestFullscreen();
-        // Hide the VR button
-        var vrButton = popup.querySelector('button');
-        if (vrButton) {
-            vrButton.style.display = 'none';
-        }
-    }
-</script>
+    <!-- Content -->
+    <div class="container">
+        <h1>Available Houses</h1>
+        <div class="content">
+            {% if available_results %}
+                <ul class="houses-list">
+                    {% for result in available_results %}
+                        <li class="house-item">
+                            <h2>House ID: {{ result['house_id'] }}</h2>
+                            <p>Number of Rooms: {{ result['rooms'] }}</p>
+                            <p class="description">Description: {{ result['description'] }}</p>
+                            <button onclick="showVR(`{{ result['rooms'] }}`)">View VR</button>
+                            <div id="vr-popup-{{ result['rooms'] }}" class="vr-popup">
+                                <a-scene>
+                                    <a-sky src="{{ result['url'] }}" rotation="0 -90 0"></a-sky>
+                                </a-scene>
+                            </div>
+                            <form action="/book" method="POST">
+                                <input type="hidden" name="house_id" value="{{ result['house_id'] }}">
+                                <input type="hidden" name="check_in" value="{{ request.form['check_in'] }}">
+                                <input type="hidden" name="check_out" value="{{ request.form['check_out'] }}">
+                                <input type="submit" value="Book Now" style="background-color: #007bff;color: #fff;border: none;padding: 10px 20px;border-radius: 10px;cursor: pointer;margin-top: 20px;">
 
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Sorry, no houses are available for your requested dates or rooms.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- JavaScript for VR popup -->
+    <script>
+        function showVR(roomId) {
+            var popup = document.getElementById('vr-popup-' + roomId);
+            popup.style.display = 'block';
+            popup.requestFullscreen();
+            // Hide the VR button
+            var vrButton = popup.querySelector('button');
+            if (vrButton) {
+                vrButton.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
