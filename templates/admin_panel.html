@@ -13,14 +13,16 @@
         }
 
         .container {
-            max-width: 1000px;
-            margin: 50px auto;
+            margin-top: 50px;  
+            margin-left: 10px;
+            margin-right: 50px;          
             padding: 20px;
+            width: max-content;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
-        }
+}
 
         .container:hover {
             transform: scale(1.01);
@@ -137,7 +139,15 @@
                     <th>Check-in Date</th>
                     <th>Check-out Date</th>
                     <th>House ID</th>
-                    <th>Status</th>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Phone Number</th>
+                    <th>Purpose of Visit</th>
+                    <th>Originator Name</th>
+                    <th>Department Contact Number</th>
+                    <th>No. of Breakfast</th>
+                    <th>No. of Lunch</th>
+                    <th>No. of Dinner</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -149,11 +159,15 @@
                     <td>{{ booking['check_in'] }}</td>
                     <td>{{ booking['check_out'] }}</td>
                     <td>{{ booking['House_NO'] }}</td>
-                    <td>
-                        <span class="status-label {% if booking['status'] == 'accept' %}status-accept{% elif booking['status'] == 'reject' %}status-reject{% else %}status-pending{% endif %}">
-                            {{ booking['status'] | capitalize }}
-                        </span>
-                    </td>
+                    <td>{{ booking['name'] }}</td>
+                    <td>{{ booking['designation'] }}</td>
+                    <td>{{ booking['phone_no'] }}</td>
+                    <td>{{ booking['purpose_of_visit'] }}</td>
+                    <td>{{ booking['originator_name'] }}</td>
+                    <td>{{ booking['department_contact_no'] }}</td>
+                    <td>{{ booking['no_of_breakfast'] }}</td>
+                    <td>{{ booking['no_of_lunch'] }}</td>
+                    <td>{{ booking['no_of_dinner'] }}</td>
                     <td>
                         <form class="action-form" method="post" action="{{ url_for('admin_panel') }}">
                             <input type="hidden" name="booking_id" value="{{ booking['id'] }}">
