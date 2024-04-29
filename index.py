@@ -1,10 +1,15 @@
 from flask import Flask, render_template, request, g, redirect, url_for, session
 import sqlite3
-
+from email.message import EmailMessage
+import smtplib
 
 application = Flask(__name__)
 application.config['DATABASE'] = 'site.db'
 application.secret_key = "hello"
+
+EMAIL_ADDRESS = "pranavas.22aim@kongu.edu"  # Your Gmail email address
+EMAIL_PASSWORD = "jqrv keez hjws fxvz"  # Your Gmail password or app-specific password
+RECIPIENT_EMAIL = "pranavsivakumar328@gmail.com"
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -28,7 +33,7 @@ house_info = {
         'adults': 2,
         'children': 1,
         'description': "NATURAL VIEW",
-        'url': "https://saliniyan.github.io/images/room.jpeg"
+        'url': "https://vaitheeshwarij14.github.io/images/hack1.jpg"
     },
 
     2: {
@@ -36,14 +41,14 @@ house_info = {
         'adults': 3,
         'children': 2,
         'description': "HOTEL NEAR",
-        'url': "https://saliniyan.github.io/images/room.jpeg"
+        'url': "https://vaitheeshwarij14.github.io/images/hack2.jpg"
     },
     3: {
         'rooms': 2,
         'adults': 1,
         'children': 0,
         'description': "PARKING LOT",
-        'url': "https://saliniyan.github.io/images/room.jpeg"
+        'url': "https://vaitheeshwarij14.github.io/images/hack3.jpg"
     }
 }
 
@@ -183,6 +188,9 @@ def submit_form():
 
 @application.route('/admin', methods=['GET', 'POST'])
 def admin_panel():
+    if 'username' not in session or session['username'] != 'b':
+        return redirect(url_for('index')) 
+
     if request.method == 'GET':
         db = get_db()
         cursor = db.cursor()
@@ -203,6 +211,8 @@ def admin_panel():
                 UPDATE reservations SET status = 'accepted' WHERE id = ?;
             ''', (booking_id,))
             db.commit()
+            # Notify user via email that booking is accepted
+            send_email('accepted')
         elif action == 'reject':
             db = get_db()
             cursor = db.cursor()
@@ -210,8 +220,31 @@ def admin_panel():
                 UPDATE reservations SET status = 'rejected' WHERE id = ?;
             ''', (booking_id,))
             db.commit()
+            # Notify user via email that booking is rejected
+            send_email('rejected')
 
         return redirect(url_for('admin_panel'))
+# Define the send_email function
+def send_email(status):
+    msg = EmailMessage()
+    msg['Subject'] = 'Booking Status Notification'
+    msg['From'] = EMAIL_ADDRESS
+    msg['To'] = RECIPIENT_EMAIL
+
+    if status == 'accepted':
+        msg.set_content("""\
+            Booking Accepted!
+            Your booking for the room has been accepted.
+        """)
+    elif status == 'rejected':
+        msg.set_content("""\
+            Booking Rejected!
+            We regret to inform you that your booking for the room has been rejected.
+        """)
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        smtp.send_message(msg)
 
 if __name__ == '__main__':
     create_tables()
