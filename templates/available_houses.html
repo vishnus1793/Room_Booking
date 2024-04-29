@@ -102,20 +102,20 @@
             <ul class="houses-list">
                 {% for result in available_results %}
                     <li class="house-item">
-                        House ID: {{ result.split(' ')[0] }}
+                        House ID: {{ result['house_id'] }}
                         <br>
-                        Number of Rooms: {{ result.split(' ')[1] }}
+                        Number of Rooms: {{ result['rooms'] }}
                         <br>
-                        Description: {{ ' '.join(result.split(' ')[2:]) }}
-                        <button onclick="showVR('{{ result.split(' ')[1] }}')">View VR</button>
-                        <div id="vr-popup-{{ result.split(' ')[1] }}" class="vr-popup">
+                        Description: {{ result['description'] }}
+                        <button onclick="showVR(`{{ result['rooms'] }}`)">View VR</button>
+                        <div id="vr-popup-{{ result['rooms'] }}" class="vr-popup">
                             <a-scene>
-                                <a-sky src="https://saliniyan.github.io/images/maxresdefault.jpg" rotation="0 -90 0"></a-sky>
+                                <a-sky src="{{ result['url'] }}" rotation="0 -90 0"></a-sky>
                             </a-scene>
-                            <button onclick="hideVR('{{ result.split(' ')[1] | escape }}')">Close VR</button>
+                             <!--<button onclick="hideVR(`{{ result['rooms'] | escape }}`)">Close VR</button>-->
                         </div>
                         <form action="/book" method="POST">
-                            <input type="hidden" name="house_id" value="{{ result.split(' ')[0] }}">
+                            <input type="hidden" name="house_id" value="{{ result['house_id'] }}">
                             <input type="hidden" name="check_in" value="{{ request.form['check_in'] }}">
                             <input type="hidden" name="check_out" value="{{ request.form['check_out'] }}">
                             <input type="submit" value="Book Now" style="font-size: medium; background-color: rgb(33, 120, 225); color: #fff; border-radius: 5px;">

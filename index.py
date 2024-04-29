@@ -37,14 +37,14 @@ house_info = {
         'adults': 3,
         'children': 2,
         'description': "HOTEL NEAR",
-        'url': "https://saliniyan.github.io/images/maxresdefault.jpg"
+        'url': "https://saliniyan.github.io/images/room2.jpeg"
     },
     3: {
         'rooms': 2,
         'adults': 1,
         'children': 0,
         'description': "PARKING LOT",
-        'url': "https://saliniyan.github.io/images/maxresdefault.jpg"
+        'url': "https://articulate-heroes.s3.amazonaws.com/uploads/rte/blknfsca_tu09tpc-a-large-bed-in-a-room%20(1).jpeg"
     }
 }
 
@@ -98,15 +98,20 @@ def submit():
             (check_in BETWEEN ? AND ? OR check_out BETWEEN ? AND ?);
         ''', (house_id, check_in, check_out, check_in, check_out))
         booking_count = cursor.fetchone()[0]
-        if booking_count == 0:
+        if booking_count == 0:  # Indent this block properly
             house_description = house_info[house_id]['description']
-            available_results.append(f"{house_id} {house_info[house_id]['rooms']} {house_description}")
+            house_url = house_info[house_id]['url']
+            available_results.append({
+                'house_id': house_id,
+                'rooms': house_info[house_id]['rooms'],
+                'description': house_description,
+                'url': house_url
+            })
 
     if available_results:
         return render_template('available_houses.html', available_results=available_results)
     else:
         return "Sorry, no houses are available for your requested dates or rooms."
-
 # Route for booking
 @application.route('/book', methods=['POST'])
 def book():
