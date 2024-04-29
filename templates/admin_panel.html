@@ -126,6 +126,15 @@
         .status-pending {
             background-color: #f39c12;
         }
+        .dropdown {
+        width: 150px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        font-size: 14px;
+        color: #333;
+    }
     </style>
 </head>
 <body>
@@ -135,7 +144,6 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>User</th>
                     <th>Check-in Date</th>
                     <th>Check-out Date</th>
                     <th>House ID</th>
@@ -155,7 +163,6 @@
                 {% for booking in pending_bookings %}
                 <tr>
                     <td>{{ booking['id'] }}</td>
-                    <td>{{ booking['User'] }}</td>
                     <td>{{ booking['check_in'] }}</td>
                     <td>{{ booking['check_out'] }}</td>
                     <td>{{ booking['House_NO'] }}</td>

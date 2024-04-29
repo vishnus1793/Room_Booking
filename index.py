@@ -6,8 +6,6 @@ application = Flask(__name__)
 application.config['DATABASE'] = 'site.db'
 application.secret_key = "hello"
 
-mail = "saliniyanp02@gmail.com"
-
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
@@ -55,7 +53,6 @@ def create_tables():
         cursor = db.cursor()
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS reservations (
-                User varchar(50),
                 id INTEGER PRIMARY KEY,
                 check_in DATE,
                 check_out DATE,
@@ -176,9 +173,9 @@ def submit_form():
     status = "pending"
 
     cursor.execute('''
-        INSERT INTO reservations (check_in, check_out, House_NO, status, User, name, designation, phone_no, purpose_of_visit, originator_name, department_contact_no, no_of_breakfast, no_of_lunch, no_of_dinner)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-    ''', (check_in, check_out, house_id, status, mail, name, designation, phone_no, purpose_of_visit, originator_name, department_contact_no, no_of_breakfast, no_of_lunch, no_of_dinner))
+        INSERT INTO reservations (check_in, check_out, House_NO, status,  name, designation, phone_no, purpose_of_visit, originator_name, department_contact_no, no_of_breakfast, no_of_lunch, no_of_dinner)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    ''', (check_in, check_out, house_id, status, name, designation, phone_no, purpose_of_visit, originator_name, department_contact_no, no_of_breakfast, no_of_lunch, no_of_dinner))
 
     db.commit()
     success_message = "Your request is successfully sent to admin"
