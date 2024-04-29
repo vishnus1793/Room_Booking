@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guest Details Form</title>
+    <!-- Add any CSS styling here if needed -->
+</head>
+<body>
+    <h2>Guest Details Form</h2>
+    <form action="/submit_form" method="POST">
+        <!-- Hidden fields for house booking details -->
+        <input type="hidden" name="house_id" value="{{ house_id }}">
+        <input type="hidden" name="check_in" value="{{ check_in }}">
+        <input type="hidden" name="check_out" value="{{ check_out }}">
+        
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        
+        <label for="designation">Designation:</label>
+        <input type="text" id="designation" name="designation" required><br><br>
+        
+        <label for="phone_no">Phone Number:</label>
+        <input type="text" id="phone_no" name="phone_no" required><br><br>
+        
+        <label for="purpose_of_visit">Purpose of Visit:</label>
+        <input type="text" id="purpose_of_visit" name="purpose_of_visit" required><br><br>
+        
+        <label for="originator_name">Originator Name:</label>
+        <input type="text" id="originator_name" name="originator_name" required><br><br>
+        
+        <label for="department_contact_no">Department Contact Number:</label>
+        <input type="text" id="department_contact_no" name="department_contact_no" required><br><br>
+        
+        <label for="no_of_breakfast">Number of Breakfast:</label>
+        <input type="text" id="no_of_breakfast" name="no_of_breakfast" required><br><br>
+        
+        <label for="no_of_lunch">Number of Lunch:</label>
+        <input type="text" id="no_of_lunch" name="no_of_lunch" required><br><br>
+        
+        <label for="no_of_dinner">Number of Dinner:</label>
+        <input type="text" id="no_of_dinner" name="no_of_dinner" required><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

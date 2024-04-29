@@ -57,10 +57,19 @@ def create_tables():
             CREATE TABLE IF NOT EXISTS reservations (
                 User varchar(50),
                 id INTEGER PRIMARY KEY,
-                check_in DATE NOT NULL,
-                check_out DATE NOT NULL,
+                check_in DATE,
+                check_out DATE,
                 House_NO INTEGER NOT NULL,
                 status varchar(50),
+                name TEXT,
+                designation TEXT,
+                phone_no TEXT,
+                purpose_of_visit TEXT,
+                originator_name TEXT,
+                department_contact_no TEXT,
+                no_of_breakfast INTEGER,
+                no_of_lunch INTEGER,
+                no_of_dinner INTEGER,
                 FOREIGN KEY (House_NO) REFERENCES houses(id)
             );
         ''')
@@ -142,19 +151,37 @@ def book():
     if not house_id or not check_in or not check_out:
         return "Invalid input. Please fill in all fields correctly."
 
+    # Render the guest details form, passing house booking details as parameters
+    return render_template('guest_details_form.html', house_id=house_id, check_in=check_in, check_out=check_out)
+
+@application.route('/submit_form', methods=['POST'])
+def submit_form():
+    # Extract guest details from the form
+    name = request.form['name']
+    designation = request.form['designation']
+    phone_no = request.form['phone_no']
+    purpose_of_visit = request.form['purpose_of_visit']
+    originator_name = request.form['originator_name']
+    department_contact_no = request.form['department_contact_no']
+    no_of_breakfast = request.form['no_of_breakfast']
+    no_of_lunch = request.form['no_of_lunch']
+    no_of_dinner = request.form['no_of_dinner']
+    house_id = request.form['house_id']
+    check_in = request.form['check_in']
+    check_out = request.form['check_out']
+
+    # Insert both guest details and house booking details into the database
     db = get_db()
     cursor = db.cursor()
     status = "pending"
 
     cursor.execute('''
-        INSERT INTO reservations (check_in, check_out, House_NO, status, User)
-        VALUES (?, ?, ?, ?, ?);
-    ''', (check_in, check_out, house_id, status, mail))
+        INSERT INTO reservations (check_in, check_out, House_NO, status, User, name, designation, phone_no, purpose_of_visit, originator_name, department_contact_no, no_of_breakfast, no_of_lunch, no_of_dinner)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    ''', (check_in, check_out, house_id, status, mail, name, designation, phone_no, purpose_of_visit, originator_name, department_contact_no, no_of_breakfast, no_of_lunch, no_of_dinner))
 
     db.commit()
-
-    success_message = "Your Request was successfully sent to admin"
-
+    success_message = "Your request is successfully sent to admin"
     return render_template('success.html', success_message=success_message)
 
 @application.route('/admin', methods=['GET', 'POST'])
