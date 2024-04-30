@@ -7,8 +7,8 @@ application = Flask(__name__)
 application.config['DATABASE'] = 'site.db'
 application.secret_key = "hello"
 
-EMAIL_ADDRESS = "pranavas.22aim@kongu.edu"  # Your Gmail email address
-EMAIL_PASSWORD = "jqrv keez hjws fxvz"  # Your Gmail password or app-specific password
+EMAIL_ADDRESS = "vishnus.22aim@kongu.edu"  # Your Gmail email address
+EMAIL_PASSWORD = "vishnu17"  # Your Gmail password or app-specific password
 RECIPIENT_EMAIL = "pranavsivakumar328@gmail.com"
 
 def get_db():
@@ -86,7 +86,7 @@ def authenticate():
     username = request.form['username']
     password = request.form['password']
 
-    if username == 's' and password == '123':
+    if username == 's.ac.in' and password == '123':
         session['username'] = username
         return redirect(url_for('index1'))  # Redirect to index1 route
     elif username == 'b' and password == '456':
@@ -97,7 +97,7 @@ def authenticate():
 
 @application.route('/index1')
 def index1():
-    if 'username' in session and session['username'] == 's':
+    if 'username' in session and session['username'] == 's.ac.in':
         return render_template('index1.html')
     else:
         return redirect(url_for('index'))
@@ -203,6 +203,7 @@ def admin_panel():
     elif request.method == 'POST':
         booking_id = request.form['booking_id']
         action = request.form['action']
+        reason = request.form['reason']
 
         if action == 'accept':
             db = get_db()
@@ -212,7 +213,7 @@ def admin_panel():
             ''', (booking_id,))
             db.commit()
             # Notify user via email that booking is accepted
-            send_email('accepted')
+            send_email('accepted', booking_id, reason)
         elif action == 'reject':
             db = get_db()
             cursor = db.cursor()
@@ -221,25 +222,28 @@ def admin_panel():
             ''', (booking_id,))
             db.commit()
             # Notify user via email that booking is rejected
-            send_email('rejected')
+            send_email('rejected', booking_id, reason)
 
         return redirect(url_for('admin_panel'))
-# Define the send_email function
-def send_email(status):
+
+def send_email(status, booking_id, reason):
     msg = EmailMessage()
     msg['Subject'] = 'Booking Status Notification'
     msg['From'] = EMAIL_ADDRESS
     msg['To'] = RECIPIENT_EMAIL
 
     if status == 'accepted':
-        msg.set_content("""\
+        msg.set_content(f"""\
             Booking Accepted!
-            Your booking for the room has been accepted.
+            Your booking for the room with ID {booking_id} has been accepted.
+
         """)
     elif status == 'rejected':
-        msg.set_content("""\
+        msg.set_content(f"""\
             Booking Rejected!
-            We regret to inform you that your booking for the room has been rejected.
+            We regret to inform you that your booking for the room with ID {booking_id} has been rejected.
+
+            Reason: {reason}
         """)
 
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
