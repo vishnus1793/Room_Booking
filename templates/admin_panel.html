@@ -23,6 +23,19 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
 }
+        .container_button{
+            margin-left: 10px;
+            margin-right: 50px;          
+            padding: 20px;
+            width: max-content;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+            
+}
+.container_button button:hover {
+        background-color: #2980b9;
+        transform: scale(1.01);
+}
 
         .container:hover {
             transform: scale(1.01);
@@ -187,7 +200,6 @@
                             <div id="reasonDiv" style="display: none;">
                                 <label for="reason">Reason for rejection:</label><br>
                                 <textarea id="reason" name="reason" rows="4" cols="50"></textarea><br>
-                                <button onclick="submitReason()">Submit</button>
                             </div>
                         </td>
                         <td>
@@ -198,6 +210,10 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+    <div class="container_button">
+    <br>
+    <button id="downloadButton" class="button" style= "margin-right: 20px;">Download Accepted Bookings</button>
     </div>
 <script>
 function showReason() {
@@ -217,9 +233,39 @@ function submitReason() {
         alert("Please enter a reason for rejection.");
     } else {
         alert("Reason submitted: " + reasonText);
-        // You can add further logic here, such as sending the reason to a server via AJAX
+        //can logic here, such as sending the reason to a server via AJAX
     }
 }
+document.getElementById('downloadButton').addEventListener('click', function() {
+            // Send a GET request to the server
+            fetch('/accepted_bookings', {
+                method: 'GET',
+            })
+            .then(response => {
+                // Check if the response is successful
+                if (response.ok) {
+                    // Create a blob from the response
+                    return response.blob();
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .then(blob => {
+                // Create a temporary link element
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'accepted_bookings.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                // Clean up the URL object
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        });
 </script>
 
 </body>

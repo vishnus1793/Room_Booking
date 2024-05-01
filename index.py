@@ -1,14 +1,16 @@
-from flask import Flask, render_template, request, g, redirect, url_for, session
+from flask import Flask, render_template, request, g, redirect, url_for, session,send_file
 import sqlite3
 from email.message import EmailMessage
 import smtplib
+import pandas as pd
+from io import BytesIO
 
 application = Flask(__name__)
 application.config['DATABASE'] = 'site.db'
 application.secret_key = "hello"
 
-EMAIL_ADDRESS = "vishnus.22aim@kongu.edu"  # Your Gmail email address
-EMAIL_PASSWORD = "vishnu17"  # Your Gmail password or app-specific password
+EMAIL_ADDRESS = "vishnus.22aim@kongu.edu" 
+EMAIL_PASSWORD = "vishnu17"  
 RECIPIENT_EMAIL = "pranavsivakumar328@gmail.com"
 
 def get_db():
@@ -249,6 +251,31 @@ def send_email(status, booking_id, reason):
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         smtp.send_message(msg)
+
+@application.route('/accepted_bookings', methods=['GET'])
+def database_view():
+    # Connect to the SQLite database
+    conn = sqlite3.connect(application.config['DATABASE'])
+
+    query = "SELECT * FROM reservations WHERE status = 'accepted';"
+
+    # Fetch data into a pandas DataFrame
+    df = pd.read_sql_query(query, conn)
+
+    conn.close()
+
+    # Convert the DataFrame to an Excel file in memory
+    excel_file = BytesIO()
+    df.to_excel(excel_file, index=False)
+    excel_file.seek(0)
+
+    # Send the Excel file as a response to the client
+    return send_file(
+        excel_file,
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        as_attachment=True,
+        download_name='accepted_bookings.xlsx'
+    )
 
 if __name__ == '__main__':
     create_tables()
