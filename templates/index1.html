@@ -106,7 +106,7 @@
         const checkInDate = new Date(this.value);
         const checkOutDate = new Date(document.getElementById('check_out').value);
 
-        if (checkInDate >= checkOutDate) {
+        if (checkInDate > checkOutDate) {
             alert('Check-in date must be earlier than check-out date.');
             this.value = '';
         }
@@ -116,7 +116,7 @@
         const checkInDate = new Date(document.getElementById('check_in').value);
         const checkOutDate = new Date(this.value);
 
-        if (checkInDate >= checkOutDate) {
+        if (checkInDate > checkOutDate) {
             alert('Check-out date must be later than check-in date.');
             this.value = '';
         }
