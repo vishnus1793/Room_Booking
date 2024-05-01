@@ -35,7 +35,7 @@ house_info = {
         'adults': 2,
         'children': 1,
         'description': "NATURAL VIEW",
-        'url': "https://vaitheeshwarij14.github.io/images/hack1.jpg"
+        'url': "https://saliniyan.github.io/images/room_1.jpg"
     },
 
     2: {
@@ -43,14 +43,14 @@ house_info = {
         'adults': 3,
         'children': 2,
         'description': "HOTEL NEAR",
-        'url': "https://vaitheeshwarij14.github.io/images/hack2.jpg"
+        'url': "https://saliniyan.github.io/images/room_2.jpg"
     },
     3: {
         'rooms': 2,
         'adults': 1,
         'children': 0,
         'description': "PARKING LOT",
-        'url': "https://vaitheeshwarij14.github.io/images/hack3.jpg"
+        'url': "https://saliniyan.github.io/images/room_3.jpg"
     }
 }
 
